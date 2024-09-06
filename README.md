@@ -20,3 +20,8 @@ Whoami es una aplicación web construida con Flask y Twilio que proporciona dive
    ```bash
    git clone https://github.com/tu_usuario/whoami.git
    cd whoami
+
+2. Instala las dependencias:
+ ```bash
+pip install -r requirements.txt
+python app.py
