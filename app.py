@@ -1,7 +1,3 @@
-# app.py
-
-from flask import Flask, request, jsonify
-from twilio.twiml.messaging_response import MessagingResponse
 import openai
 import speech_recognition as sr
 import pyttsx3
@@ -10,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 import torch
 from torchvision import models, transforms
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import io
 import os
 from googletrans import Translator
@@ -26,9 +22,6 @@ from email.mime.multipart import MIMEMultipart
 from geopy.distance import geodesic
 import morse3 as morse
 from newsapi import NewsApiClient
-from PIL import ImageDraw, ImageFont
-
-app = Flask(__name__)
 
 # Configuración de la API de OpenAI
 openai.api_key = 'TU_API_KEY_DE_OPENAI'
@@ -246,114 +239,134 @@ def crear_sticker(texto, color_fondo="white", color_texto="black"):
     imagen.save(sticker_path)
     return sticker_path
 
-# Endpoint principal para manejar las solicitudes de WhatsApp
-@app.route("/whatsapp", methods=['POST'])
-def whatsapp():
-    msg = request.form.get('Body')
-    resp = MessagingResponse()
+# Función principal de prueba
+def main():
+    print("¡Bienvenido al asistente de consola!")
+    while True:
+        print("\nOpciones:")
+        print("1. Obtener info de YouTube")
+        print("2. Crear una imagen")
+        print("3. Reconocer voz")
+        print("4. Aprender de un sitio web")
+        print("5. Detectar idioma")
+        print("6. Traducir texto")
+        print("7. Resumir texto")
+        print("8. Analizar sentimiento")
+        print("9. Convertir PDF a texto")
+        print("10. Realizar cálculo matemático")
+        print("11. Obtener clima")
+        print("12. Buscar en Wikipedia")
+        print("13. Enviar correo")
+        print("14. Procesar imagen")
+        print("15. Buscar noticias")
+        print("16. Convertir a Morse")
+        print("17. Calcular distancia")
+        print("18. Crear un sticker")
+        print("0. Salir")
+        
+        opcion = input("Selecciona una opción: ")
+        
+        if opcion == "0":
+            break
+        
+        elif opcion == "1":
+            url = input("Ingresa la URL del video de YouTube: ")
+            info = obtener_info_youtube(url)
+            print(f"El video '{info['title']}' fue creado por {info['author']} y tiene {info['views']} vistas.")
+        
+        elif opcion == "2":
+            descripcion = input("Ingresa la descripción de la imagen: ")
+            imagen_url = generar_imagen(descripcion)
+            print(f"Aquí tienes la imagen que pediste: {imagen_url}")
+        
+        elif opcion == "3":
+            audio_file = input("Ingresa la ruta del archivo de audio: ")
+            texto = reconocer_voz(audio_file)
+            print(f"El texto del audio es: {texto}")
+        
+        elif opcion == "4":
+            url = input("Ingresa la URL del sitio web: ")
+            texto = aprender_de_web(url)
+            print(f"He aprendido lo siguiente del sitio web: {texto[:200]}...")  # Limitamos la cantidad de texto
+        
+        elif opcion == "5":
+            texto = input("Ingresa el texto para detectar el idioma: ")
+            idioma = detectar_idioma(texto)
+            print(f"El idioma detectado es: {idioma}")
+        
+        elif opcion == "6":
+            texto = input("Ingresa el texto a traducir: ")
+            traduccion = traducir_texto(texto)
+            print(f"Traducción: {traduccion}")
+        
+        elif opcion == "7":
+            texto = input("Ingresa el texto a resumir: ")
+            resumen = resumir_texto(texto)
+            print(f"Resumen: {resumen}")
 
-    if 'youtube.com' in msg or 'youtu.be' in msg:
-        info = obtener_info_youtube(msg)
-        respuesta = f"El video '{info['title']}' fue creado por {info['author']} y tiene {info['views']} vistas."
-        resp.message(respuesta)
-    
-    elif 'crea una imagen' in msg:
-        descripcion = msg.replace('crea una imagen', '').strip()
-        imagen_url = generar_imagen(descripcion)
-        resp.message(f"Aquí tienes la imagen que pediste: {imagen_url}")
-    
-    elif 'reproduce este audio' in msg:
-        audio_url = obtener_url_audio(msg)  # Necesitarás implementar esta función
-        texto = reconocer_voz(audio_url)
-        resp.message(f"El texto del audio es: {texto}")
-    
-    elif 'aprende de' in msg:
-        url = msg.replace('aprende de', '').strip()
-        texto = aprender_de_web(url)
-        resp.message(f"He aprendido lo siguiente del sitio web: {texto[:200]}...")  # Limitamos la cantidad de texto
-    
-    elif 'detecta el idioma' in msg:
-        texto = msg.replace('detecta el idioma', '').strip()
-        idioma = detectar_idioma(texto)
-        resp.message(f"El idioma detectado es: {idioma}")
-    
-    elif 'traduce' in msg:
-        texto = msg.replace('traduce', '').strip()
-        traduccion = traducir_texto(texto)
-        resp.message(f"Traducción: {traduccion}")
-    
-    elif 'resume' in msg:
-        texto = msg.replace('resume', '').strip()
-        resumen = resumir_texto(texto)
-        resp.message(f"Resumen: {resumen}")
+        elif opcion == "8":
+            texto = input("Ingresa el texto para analizar el sentimiento: ")
+            sentimiento = analizar_sentimiento(texto)
+            print(f"Sentimiento: {sentimiento}")
+        
+        elif opcion == "9":
+            pdf_file = input("Ingresa la ruta del archivo PDF: ")
+            texto = convertir_pdf_a_texto(pdf_file)
+            print(f"Texto del PDF: {texto[:200]}...")  # Limitamos la cantidad de texto
+        
+        elif opcion == "10":
+            expresion = input("Ingresa la expresión matemática a calcular: ")
+            resultado = realizar_calculo(expresion)
+            print(f"Resultado: {resultado}")
+        
+        elif opcion == "11":
+            ciudad = input("Ingresa la ciudad para obtener el clima: ")
+            clima = obtener_clima(ciudad)
+            print(clima)
+        
+        elif opcion == "12":
+            consulta = input("Ingresa la consulta para buscar en Wikipedia: ")
+            resumen = buscar_wikipedia(consulta)
+            print(f"Información de Wikipedia: {resumen}")
+        
+        elif opcion == "13":
+            destinatario = input("Ingresa el destinatario del correo: ")
+            asunto = input("Ingresa el asunto del correo: ")
+            mensaje = input("Ingresa el mensaje del correo: ")
+            resultado = enviar_correo(destinatario, asunto, mensaje)
+            print(resultado)
+        
+        elif opcion == "14":
+            imagen_base64 = input("Ingresa la imagen en base64 para procesar: ")
+            resultado = procesar_imagen_base64(imagen_base64)
+            print(f"Resultado del procesamiento de imagen: {resultado}")
 
-    elif 'analiza el sentimiento' in msg:
-        texto = msg.replace('analiza el sentimiento', '').strip()
-        sentimiento = analizar_sentimiento(texto)
-        resp.message(f"Sentimiento: {sentimiento}")
-    
-    elif 'convierte PDF' in msg:
-        # Necesitarás implementar lógica para cargar el PDF. Por ahora, se simula con un archivo existente.
-        pdf_path = "ruta/a/tu/archivo.pdf"  # Simula el archivo PDF
-        texto = convertir_pdf_a_texto(pdf_path)
-        resp.message(f"Texto del PDF: {texto[:200]}...")  # Limitamos la cantidad de texto
-    
-    elif 'calcula' in msg:
-        expresion = msg.replace('calcula', '').strip()
-        resultado = realizar_calculo(expresion)
-        resp.message(f"Resultado: {resultado}")
-    
-    elif 'clima en' in msg:
-        ciudad = msg.replace('clima en', '').strip()
-        clima = obtener_clima(ciudad)
-        resp.message(clima)
-    
-    elif 'busca en Wikipedia' in msg:
-        consulta = msg.replace('busca en Wikipedia', '').strip()
-        resumen = buscar_wikipedia(consulta)
-        resp.message(f"Información de Wikipedia: {resumen}")
-    
-    elif 'envía un correo' in msg:
-        partes = msg.replace('envía un correo', '').strip().split(';')
-        destinatario = partes[0].strip()
-        asunto = partes[1].strip()
-        mensaje = partes[2].strip()
-        resultado = enviar_correo(destinatario, asunto, mensaje)
-        resp.message(resultado)
-    
-    elif 'procesa imagen' in msg:
-        imagen_base64 = msg.replace('procesa imagen', '').strip()
-        resultado = procesar_imagen_base64(imagen_base64)
-        resp.message(f"Resultado del procesamiento de imagen: {resultado}")
+        elif opcion == "15":
+            tema = input("Ingresa el tema para buscar noticias: ")
+            noticias = buscar_noticias(tema)
+            print(f"Noticias recientes sobre {tema}:\n{noticias}")
+        
+        elif opcion == "16":
+            texto = input("Ingresa el texto para convertir a Morse: ")
+            morse_code = convertir_a_morse(texto)
+            print(f"Código Morse: {morse_code}")
 
-    elif 'busca noticias de' in msg:
-        tema = msg.replace('busca noticias de', '').strip()
-        noticias = buscar_noticias(tema)
-        resp.message(f"Noticias recientes sobre {tema}:\n{noticias}")
-    
-    elif 'convierte a morse' in msg:
-        texto = msg.replace('convierte a morse', '').strip()
-        morse_code = convertir_a_morse(texto)
-        resp.message(f"Código Morse: {morse_code}")
+        elif opcion == "17":
+            coord1 = input("Ingresa la primera coordenada (latitud,longitud): ")
+            coord2 = input("Ingresa la segunda coordenada (latitud,longitud): ")
+            coord1 = tuple(map(float, coord1.split(',')))
+            coord2 = tuple(map(float, coord2.split(',')))
+            distancia = calcular_distancia(coord1, coord2)
+            print(distancia)
 
-    elif 'calcula distancia entre' in msg:
-        coords = msg.replace('calcula distancia entre', '').strip().split(';')
-        coord1 = tuple(map(float, coords[0].split(',')))
-        coord2 = tuple(map(float, coords[1].split(',')))
-        distancia = calcular_distancia(coord1, coord2)
-        resp.message(distancia)
+        elif opcion == "18":
+            texto = input("Ingresa el texto para crear el sticker: ")
+            sticker_path = crear_sticker(texto)
+            print(f"Sticker creado y guardado en: {sticker_path}")
 
-    elif 'crea un sticker' in msg:
-        texto = msg.replace('crea un sticker', '').strip()
-        sticker_path = crear_sticker(texto)
-        with open(sticker_path, 'rb') as f:
-            resp.message('Aquí tienes tu sticker:', media_url=f'static/{sticker_path}')
-    
-    else:
-        respuesta = generar_respuesta(msg)
-        resp.message(respuesta)
-
-    return str(resp)
+        else:
+            print("Opción no válida. Intenta de nuevo.")
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    main()
+
