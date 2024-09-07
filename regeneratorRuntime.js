@@ -1,9 +1,9 @@
-import _typeof from "./typeof.js";
+var _typeof = require("./typeof.js")["default"];
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-  _regeneratorRuntime = function _regeneratorRuntime() {
+  module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
     return e;
-  };
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
   var t,
     e = {},
     r = Object.prototype,
@@ -301,4 +301,4 @@ function _regeneratorRuntime() {
     }
   }, e;
 }
-export { _regeneratorRuntime as default };
+module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
